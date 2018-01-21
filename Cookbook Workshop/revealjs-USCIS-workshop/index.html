@@ -1,0 +1,484 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+		<title>reveal.js</title>
+
+		<link rel="stylesheet" href="css/reveal.css">
+		<link rel="stylesheet" href="css/theme/chef-rally-2017.css">
+
+		<!-- Theme used for syntax highlighting of code -->
+		<link rel="stylesheet" href="lib/css/zenburn.css">
+
+		<!-- Printing and PDF exports -->
+		<script>
+			var link = document.createElement( 'link' );
+			link.rel = 'stylesheet';
+			link.type = 'text/css';
+			link.href = window.location.search.match( /print-pdf/gi ) ? 'css/print/pdf.css' : 'css/print/paper.css';
+			document.getElementsByTagName( 'head' )[0].appendChild( link );
+		</script>
+	</head>
+	<body>
+		<div class="reveal">
+			<div class="slides">
+				<section>
+          <img alt="Chef Rally 2017 Logo" src="img/chef-rally-2017-logo.png"/>
+        </section>
+
+        <section>
+          <h1>COMPLIANCE CLASS++</h1>
+        </section>
+
+        <section class="two-column">
+          <div id="left">
+            <p>TOPICS TO COVER</p>
+          </div>
+
+          <div id="right">
+            <ul>
+              <li class="fragment">Chef Server Integration</li>
+              <li class="fragment">Automate Integration</li>
+              <li class="fragment">Audit Cookbook</li>
+              <li class="fragment">InSpec Editor Plugins</li>
+            </ul>
+          </div>
+        </section>
+
+        <section>
+
+          <section>
+            <h1>Chef Server Integration</h1>
+            <a href="#" class="navigate-down enabled">
+              <img alt="Down Arrow" src="img/down_arrow.png"/>
+            </a>
+          </section>
+
+          <section>
+            <h1>TL;DR: <span class="fragment">Follow the guide</span></h1>
+            <a href="#" class="navigate-down enabled fragment">
+              <img alt="Down Arrow" src="img/down_arrow.png"/>
+            </a>
+          </section>
+
+          <section>
+            <p><a href="https://docs.chef.io/integrate_compliance_chef_server.html">https://docs.chef.io/integrate_compliance_chef_server.html</a></p>
+          </section>
+
+          <section>
+            <a href="#" class="navigate-right enabled">
+              <img alt="Right Arrow" src="img/right_arrow.png"/>
+            </a>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h1>Automate Integration</h1>
+            <a href="#" class="navigate-down enabled">
+              <img alt="Down Arrow" src="img/down_arrow.png"/>
+            </a>
+          </section>
+
+          <section>
+            <h1>TL;DR: <span class="fragment">Audit Cookbook</span></h1>
+            <a href="#" class="navigate-down enabled fragment">
+              <img alt="Down Arrow" src="img/down_arrow.png"/>
+            </a>
+          </section>
+
+          <section>
+            <a href="#" class="navigate-right enabled">
+              <img alt="Right Arrow" src="img/right_arrow.png"/>
+            </a>
+          </section>
+        </section>
+
+        <section>
+          <section>
+            <h1>Audit Cookbook</h1>
+            <a href="#" class="navigate-down enabled">
+              <img alt="Down Arrow" src="img/down_arrow.png"/>
+            </a>
+          </section>
+
+          <section>
+            <h2>Common Use Cases</h2>
+
+            <ul>
+              <li class="fragment"><p>Running scans locally vs from the Compliance server</p></li>
+              <li class="fragment"><p>Reporting scan info to Visibility and/or Compliance server</p></li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Great...but how?</h2>
+          </section>
+
+          <section>
+            <h3>Easy! <span class="fragment">Create a wrapper cookbook</span></h3>
+            <h3 class="fragment">First...</h3>
+          </section>
+
+          <section>
+              <div><h2>Grab the Audit Cookbook</h2></div>
+
+              <ol>
+                <li class="fragment"><p>Clone the audit cookbook: <pre><code>git clone https://github.com/chef-cookbooks/audit.git</code></pre></p></li>
+                <li class="fragment"><p>Upload the audit cookbook to your Chef Server: <pre><code>cd audit; berks install; berks upload</code></pre></p></li>
+              <ol>
+
+          </section>
+
+          <section>
+              <div><h2>Create the Wrapper Cookbook</h2></div>
+
+              <ol>
+                <li class="fragment"><p>From a directory under your knife.rb run: <pre><code>chef generate cookbook rally_audit_wrapper</code></pre></p></li>
+                <li class="fragment"><p>Add following to metadata.rb: <pre><code>depends 'audit', '= 2.3.4'</code></pre></p></li>
+                <li class="fragment"><p>Add following to recipes/default.rb:<pre><code>include_recipe 'audit::default'</code></pre></p></li>
+                <li class="fragment"><p>Choose collectors and/or fetchers</p></li>
+              </ol>
+
+          </section>
+
+          <section>
+              <a href="#" class="navigate-down enabled">
+                <img alt="Confused and Nervous GIF" src="img/confused_and_nervous.gif"/>
+              </a>
+
+              <div><p>...but what's a collector/fetcher?</p></div>
+          </section>
+
+          <section style="text-align: left">
+            <p>Fetchers = <span class="fragment">Where do I get my Compliance profiles from?</span></p>
+            <p class="fragment">Collectors = <span class="fragment">Where do I send my reports to?</span></p>
+          </section>
+
+          <section>
+            <h1>YOU HAVE OPTIONS!</h1>
+          </section>
+
+          <section>
+            <h2>Collector: chef-compliance</h2>
+
+            <ul>
+              <li class="fragment"><p>Uses Compliance as fetcher AND collector</p></li>
+              <li class="fragment"><p>Talks directly to Compliance</p></li>
+              <li class="fragment"><p>Requires that token(s) be generated for authentication</p></li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Collector: chef-visibility</h2>
+
+            <ul>
+              <li class="fragment"><p>Uses Automate as fetcher AND collector</p></li>
+              <li class="fragment"><p>Talks directly to Automate</p></li>
+              <li class="fragment"><p>No need for a Compliance server</p></li>
+              <li class="fragment"><p>Requires Automate to be configured as an Asset Store</p></li>
+            </ul>
+          </section>
+
+          <section>
+            <h2>Collector: chef-server</h2>
+
+            <ul>
+              <li class="fragment"><p>Uses Compliance as fetcher AND collector</p></li>
+              <li class="fragment"><p>Reports data through Chef Server to Compliance</p></li>
+              <li class="fragment"><p>Requires Compliance to be paired with Chef Server</p></li>
+            </ul>
+          </section>
+
+          <section>
+            <h3>Collector: chef-server-visibility</h3>
+
+            <ul>
+              <li class="fragment"><p>Uses Automate as fetcher AND collector</p></li>
+              <li class="fragment"><p>Reports data through Chef Server to Automate</p></li>
+              <li class="fragment"><p>No need for a Compliance server</p></li>
+              <li class="fragment"><p>Requires Automate to be configured as an Asset Store</p></li>
+            </ul>
+          </section>
+
+          <section>
+            <a href="#" class="navigate-down enabled">
+              <img alt="Billy Mays - There's More" src="img/but_wait_theres_more.jpg"/>
+            </a>
+          </section>
+
+          <section>
+            <h1>YOU CAN USE MIX THEM!</h1>
+            <p class="fragment">Let's do so in our wrapper cookbook...</p>
+          </section>
+
+          <section>
+            <h2>The Wrapper Cookbook</h2>
+
+            <ul>
+              <li class="fragment"><p>From within the wrapper cookbook run: <pre><code>mkdir attributes; touch attributes/default.rb</code></pre></p></li>
+              <li class="fragment"><p>Add the following to attributes/default.rb:</p>
+                <pre><code data-trim data-noescape style="font-size: 60%">
+                    default['audit']['collector'] = ['chef-server', 'chef-server-visibility']<br/>default['audit']['fetcher'] = 'chef-server'
+                </code></pre>
+              </li>
+            </ul>
+          </section>
+
+          <section>
+            <p>This will send data to Compliance and Automate</p>
+            <p class="fragment">...and use Compliance as the fetcher</p>
+            <p class="fragment">...all through the Chef Server</p>
+          </section>
+
+          <section>
+            <a href="#" class="navigate-down enabled">
+              <img alt="Billy Mays - There's More" src="img/but_wait_theres_more.jpg"/>
+            </a>
+          </section>
+
+          <section>
+            <p>Actually...just one more thing</p>
+            <p class="fragment">We need to select a Compliance profile to use</p>
+            <p class="fragment">Let's assume a RHEL 7 node and the CIS compliance profile</p>
+          </section>
+
+          <section>
+            <p>Your attributes/default.rb would be:</p>
+            <pre class="fragment"><code data-trim data-noescape style="font-size: 60%">
+                default['audit']['collector'] = ['chef-server', 'chef-server-visibility']<br/>default['audit']['fetcher'] = 'chef-server'<br>default['audit']['profiles'] = [<br>&nbsp;&nbsp;{<br>    'name': 'cis-centos7-level1',<br>    'compliance': 'cis/cis-centos7-level1'<br>  }<br>]
+            </code></pre>
+          </section>
+
+          <section>
+            <p>Almost there...</p>
+          </section>
+
+          <section>
+              <div><h2>Upload the Wrapper Cookbook</h2></div>
+              <pre class="fragment"><code>cd rally_wrapper_demo</code></pre>
+              <pre class="fragment"><code>berks install</code></pre>
+              <pre class="fragment"><code>berks upload</code></pre>
+          </section>
+
+          <section>
+              <div><h2>Converge a Node</h2></div>
+              <pre class="fragment"><code data-noescape>knife bootstrap rallydemo.vagrant.local \<br>  -x vagrant \<br>  -r 'recipe[rally_audit_wrapper]' \<br>  -N rallydemo.vagrant.local \<br>  --sudo \<br>  --use-sudo-password</code></pre>
+          </section>
+
+          <section>
+            <h1>NOM NOM DATA!!!</h1>
+          </section>
+
+          <section data-background-image="img/rallydemo_compliance_data.png"></section>
+          <section data-background-image="img/rallydemo_automate_compliance_data.png"></section>
+          <section data-background-image="img/rallydemo_automate_converge_data.png"></section>
+
+          <section>
+            <a href="#" class="navigate-right enabled">
+              <img alt="Right Arrow" src="img/right_arrow.png"/>
+            </a>
+          </section>
+
+        </section>
+
+        <section>
+          <section>
+            <h1>InSpec Editor Plugins</h1>
+            <a href="#" class="navigate-down enabled">
+              <img alt="Down Arrow" src="img/down_arrow.png"/>
+            </a>
+          </section>
+
+          <section data-transition="fade-out">
+            <a href="https://atom.io/">
+              <img alt="Atom Logo" src="img/atom_logo.png"/>
+            </a>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Installing the Atom Plugin<h2></div>
+
+              <div id="left">
+                <p>Open the Settings Menu</p>
+                <p>HINT: &#8984;/Ctrl+,</p>
+              </div>
+
+              <div id="right">
+                <img alt="Atom - Settings Menu - Core" src="img/atom_settings_menu_core.png"/>
+              </div>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Installing the Atom Plugin<h2></div>
+
+              <div id="left">
+                <p>Click <img class="inline-button" alt="Atom - Button - Install - Blue" src="img/atom_button_settings_menu_install.png"/></p>
+              </div>
+
+              <div id="right">
+                <img alt="Atom - Settings Menu - Install" src="img/atom_settings_menu_install.png"/>
+              </div>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Installing the Atom Plugin<h2></div>
+
+              <div id="left">
+                <p>Search for "language-inspec"</p>
+              </div>
+
+              <div id="right">
+                <img alt="Atom - Settings Menu - Install - Search For 'language-inspec'" src="img/atom_settings_menu_install_search_for_language_inspec.png"/>
+              </div>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Installing the Atom Plugin<h2></div>
+
+              <div id="left">
+                <p>Click <img class="inline-button" alt="Atom - Button - Install - Blue" src="img/atom_button_install_blue.png"/></p>
+              </div>
+
+              <div id="right">
+                <img alt="Atom - Settings Menu - Install - Search Complete - InSpec" src="img/atom_settings_menu_install_search_complete_inspec.png"/>
+              </div>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Using the Atom Plugin<h2></div>
+
+              <div id="left" style="text-align: left">
+                <ol style="margin-left: 5em">
+                  <li class="fragment" data-fragment-index="1">Type &#8984;/Ctrl+L</li>
+                  <li class="fragment">Select InSpec</li>
+                  <li class="fragment">???</li>
+                </ol>
+              </div>
+
+
+              <div id="right">
+                <img alt="Atom - Grammer Select" src="img/atom_grammar_select.png" class="fragment" data-fragment-index="2"/>
+              </div>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Using the Atom Plugin</h2></div>
+
+              <div id="left">
+                <p>4. PROFIT!!!</p>
+              </div>
+
+              <div id="right">
+                <img alt="Atom - InSpec Plugin Demo" src="img/atom_inspec_plugin_demo.gif"/>
+              </div>
+          </section>
+
+          <section data-transition="fade-out">
+            <h1>VS Code</h1>
+            <a href="https://code.visualstudio.com/">
+              <img alt="VS Code Logo" src="img/vscode_logo.png" style="height: 25%; width: 25%"/>
+            </a>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Installing the VS Code Plugin<h2></div>
+
+              <div id="left">
+                <p>Click <img class="inline-button" alt="VS Code - Button - Extensions" src="img/vs_code_button_extensions.png"/></p>
+              </div>
+
+              <div id="right">
+                <img alt="VS Code - Extensions - Button" src="img/vs_code_blank.png"/>
+              </div>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Installing the VS Code Plugin<h2></div>
+
+              <div id="left">
+                <p>Search for "inspec"</p>
+              </div>
+
+              <div id="right">
+                <img alt="VS Code - Extensions - Search For 'inspec'" src="img/vs_code_extensions_search_for_inspec.png"/>
+              </div>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Installing the VS Code Plugin<h2></div>
+
+              <div id="left">
+                <p>Click <img class="inline-button" alt="VS Code - Button - Install - Green" src="img/vs_code_button_install_green.png"/></p>
+              </div>
+
+              <div id="right">
+                <img alt="VS Code - Extensions - Search Complete - InSpec" src="img/vs_code_extensions_search_complete_inspec.png"/>
+              </div>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Installing the VS Code Plugin<h2></div>
+
+              <div id="left">
+                <p>Click <img class="inline-button" alt="VS Code - Button - Reload - Blue" src="img/vs_code_button_reload_blue.png"/></p>
+              </div>
+
+              <div id="right">
+                <img alt="VS Code - Extensions - Install Complete - InSpec" src="img/vs_code_extensions_install_complete_inspec.png"/>
+              </div>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Using the VS Code Plugin<h2></div>
+
+              <div id="left" style="text-align: left">
+                <ol style="margin-left: 5em">
+                  <li class="fragment" data-fragment-index="1">Type &#8984;/Ctrl+k m</li>
+                  <li class="fragment">Select InSpec</li>
+                  <li class="fragment">???</li>
+                </ol>
+              </div>
+
+              <div id="right">
+                <img alt="VS Code - Grammer Select" src="img/vs_code_select_language_mode_inspec.png" class="fragment" data-fragment-index="2"/>
+              </div>
+          </section>
+
+          <section class="two-column-with-title" data-transition="none">
+              <div id="title"><h2>Using the VS Code Plugin</h2></div>
+
+              <div id="left">
+                <p>4. PROFIT!!!</p>
+              </div>
+
+              <div id="right">
+                <img alt="VS Code - Extension - InSpec Demo" src="img/vs_code_extension_inspec_demo.gif"/>
+              </div>
+          </section>
+        </section>
+
+      </div>
+		</div>
+
+		<script src="lib/js/head.min.js"></script>
+		<script src="js/reveal.js"></script>
+
+		<script>
+			// More info https://github.com/hakimel/reveal.js#configuration
+			Reveal.initialize({
+				history: true,
+
+				// More info https://github.com/hakimel/reveal.js#dependencies
+				dependencies: [
+					{ src: 'plugin/markdown/marked.js' },
+					{ src: 'plugin/markdown/markdown.js' },
+					{ src: 'plugin/notes/notes.js', async: true },
+					{ src: 'plugin/highlight/highlight.js', async: true, callback: function() { hljs.initHighlightingOnLoad(); } }
+				]
+			});
+		</script>
+	</body>
+</html>
